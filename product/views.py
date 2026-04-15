@@ -60,8 +60,8 @@ def product_detail_api_view(request, id):
 @api_view(['GET'])
 def product_list_api_view(request):
     # step 1: collect product (Queryset)
-    product = Product.objects.all()
-    
+    product = Product.objects.prefetch_related('reviews').all()
+
     # step 2: reformat product to list of dictionaries
     data = ProductListSerializer(product, many=True).data
     
