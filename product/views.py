@@ -12,11 +12,19 @@ from .serializers import (
 )
 
 
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
 def review_list_api_view(request):
-    reviews = Review.objects.all()
-    data = ReviewListSerializer(reviews, many=True).data
-    return Response(data=data)
+    if request.method == 'GET':
+        reviews = Review.objects.all()
+        data = ReviewListSerializer(reviews, many=True).data
+        return Response(data=data)
+    
+    elif request.method == 'POST':
+        serializer = ReviewDetailSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
 
 
 

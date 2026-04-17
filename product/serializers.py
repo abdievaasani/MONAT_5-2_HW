@@ -8,7 +8,6 @@ from django.db.models import Avg
 
 class ReviewListSerializer(serializers.ModelSerializer):
     class Meta:
-
         model = Review
         fields = '__all__'
 
@@ -18,6 +17,15 @@ class ReviewDetailSerializer(serializers.ModelSerializer):
         model = Review
         fields = '__all__'
 
+    def validate_stars(self, value):
+        if value < 1 or value > 5:
+            raise serializers.ValidationError("Рейтинг должен быть от 1 до 5")
+        return value
+    
+    def validate_text(self, value):
+        if len(value) < 10:
+            raise serializers.ValidationError("Отзыв слишком короткий")
+        return value
 
 
 class CategoryListSerializer(serializers.ModelSerializer):
@@ -37,6 +45,12 @@ class CategoryDetailSerializer(serializers.ModelSerializer):
         model = Category
         fields = '__all__'
 
+    def validate_name(self, name):
+        if len(value) < 2:
+            raise serializers.validationError("Название слишком короткое")
+        return value 
+
+
 
 
 class ProductListSerializer(serializers.ModelSerializer):
@@ -54,5 +68,15 @@ class ProductDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = '__all__'
+
+    def validate_price(self, value):
+        if value <= 0:
+            raise serializers.ValidationError("Цена должна быть положительной")
+        return value
+    
+    def validate_title(self, value):
+        if len(value) < 2:
+            raise serializers.ValidationError("Название слишком короткое")
+        return value
 
 
