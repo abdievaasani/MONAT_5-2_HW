@@ -2,6 +2,8 @@ from django.db.models import Avg, Count
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from .permissions import IsModerator
 
 from .models import Product, Category, Review
 from .serializers import (
@@ -56,6 +58,15 @@ class ProductViewSet(ModelViewSet):
     queryset = Product.objects.annotate(rating=Avg('reviews__stars'))
     serializer_class = ProductSerializer
     pagination_class = CustomPagination
+
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [IsAuthenticatedOrReadOnly()]
+
+        if self.request.method in ['PUT', 'PATCH', 'DELETE']:
+            return [IsModerator()]
+
+        return [IsAuthenticatedOrReadOnly()]
 
     def get_serializer_class(self):
         if self.request.method in ['POST', 'PUT']:
