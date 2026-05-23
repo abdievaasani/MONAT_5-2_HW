@@ -7,7 +7,7 @@ from rest_framework.authtoken.models import Token
 import random
 
 from .serializers import RegisterSerializer, ConfirmSerializer
-from .models import UserConfirmation
+from .models import ConfirmationCode
 
 class RegistrationAPIView(APIView):
     def post(self, request):
